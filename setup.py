@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='Generatrix',
-    version='1.0.14',
+    version='1.0.15',
     author='Fernando A. Balandran',
     author_email='fredz0003@gmail.com',
     description='Generates repo contents markdown',
