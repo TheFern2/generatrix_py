@@ -26,6 +26,12 @@ def get_branches():
 	return clean_branch_list
 
 
+def get_tags():
+	decoded_string = run_cmd("git tag")
+	tags = decoded_string.split()
+	return tags
+
+
 def get_git_username():
 	decoded_string = run_cmd("git config user.name")
 	return decoded_string.rstrip("\n\r")
@@ -34,25 +40,44 @@ def get_git_username():
 def get_repo_name():
 	decoded_string = run_cmd("git rev-parse --show-toplevel")
 	split_string = decoded_string.split("/")
-	print(decoded_string)
 	return split_string[-1].rstrip("\n\r")
 
 
 def main():
-	parser = argparse.ArgumentParser()
-	parser.add_argument("-u", "--user", help="set user")
+	parser = argparse.ArgumentParser(
+		description='Generate branches or tags markdown output',
+		formatter_class=argparse.RawDescriptionHelpFormatter,
+    	epilog='''Example of use:
+		Default usage returns all branches and tags markdown in chronological order:
+		gtrix
+
+		Optional arguments:
+		gtrix -u "username"
+		gtrix -t''')
+	
+	parser.add_argument('-u', '--user', help='set user[Optional]')
+	parser.add_argument("-t", '--tags', dest='tags', action='store_true', help='get tags only')
+	parser.set_defaults(tags=False)
 	args = parser.parse_args()
 
 	branches = get_branches()
+	tags = get_tags()
+	repo = get_repo_name()
+
 	if args.user:
 		username = args.user
 	else:
 		username = get_git_username()
-	repo = get_repo_name()
+		
 
 	# - [Board-Setup-2](https://github.com/kodaman2/TTT-Book/tree/Board-Setup-2)
-	for branch in branches:
-		print("- [%s](https://github.com/%s/%s/tree/%s)\n" % (branch, username, repo, branch))
+	if not args.tags:
+		for branch in branches:
+			print("- [%s](https://github.com/%s/%s/tree/%s)\n" % (branch, username, repo, branch))
+
+	if args.tags:
+		for tag in tags:
+			print("- [%s](https://github.com/%s/%s/tree/%s)\n" % (tag, username, repo, tag))
 
 
 if __name__ == '__main__':
