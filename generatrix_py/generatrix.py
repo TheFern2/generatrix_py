@@ -44,6 +44,7 @@ def get_repo_name():
 
 
 def main():
+	
 	parser = argparse.ArgumentParser(
 		description='Generate branches or tags markdown output',
 		formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -59,6 +60,12 @@ def main():
 	parser.add_argument("-t", '--tags', dest='tags', action='store_true', help='get tags only')
 	parser.set_defaults(tags=False)
 	args = parser.parse_args()
+
+	# check if .git directory exists
+	# exit if it doesn't exists
+	if ".git" not in os.listdir():
+		print("Not a git directory! Ensure you are inside a git repository")
+		sys.exit()
 
 	branches = get_branches()
 	tags = get_tags()
